@@ -1,5 +1,5 @@
 import './App.css';
-import nhlData from './Bets/NHL/2-21-2024.json'
+import nhlData from './Bets/NHL/2-25-2024.json'
 
 {console.log(nhlData)}
 
