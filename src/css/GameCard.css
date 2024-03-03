@@ -1,0 +1,8 @@
+.gameCard {
+    padding: 1rem;
+    text-align: center;
+}
+
+.gameCard h2 {
+    margin-bottom: .5rem;
+}
