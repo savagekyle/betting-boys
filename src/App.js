@@ -9,7 +9,12 @@ function App() {
     <div className="app container">
       <div className='gameCardWrapper'>
       {nhlData.map((data) => (
-        <GameCard id={data.id} homeTeam={data.homeTeam} awayTeam={data.awayTeam} time={data.commence_time} />
+        <GameCard 
+        id={data.id} 
+        homeTeam={data.homeTeam} 
+        awayTeam={data.awayTeam} 
+        time={data.commence_time} 
+        outcomes={data.fanDuelBet.markets[0].outcomes} />
       ))}
       </div>
     </div>
