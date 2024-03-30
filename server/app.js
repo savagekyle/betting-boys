@@ -22,9 +22,44 @@ const options = {
     }
 };
 
+// Testing New Api
+const sdiKey = '4df4d150d49b4b0f9fb191149dde2425'
+const bettingMetaDataUrl = 'https://api.sportsdata.io/v3/nhl/odds/json/Bettingmetadata'
+const bettingMetaDataOptions = {
+    method: 'GET',
+    headers: {
+        'Ocp-Apim-Subscription-Key': sdiKey
+    }
+}
+
+async function getBettingData(url, options) {
+    try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        const betTypes = data.BettingBetTypes;
+        const marketTypes = data.BettingMarketTypes;
+        const periodTypes = data.BettingPeriodTypes;
+        const eventTypes = data.BettingEventTypes;
+        const outcomeTypes = data.BettingOutcomeTypes;
+        const resultedMarketMetaData = data.ResultedMarketMetaData;
+        const resultTypes = data.BettingResultTypes;
+
+        console.log("Betting Bet Types:");
+        betTypes.forEach(betType => {
+            console.log(betType.Name);
+        });
+
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+getBettingData(bettingMetaDataUrl, bettingMetaDataOptions);
+
 
 //Function that calls the API
-getData(url, options);
+// getData(url, options);
 
 //Using test file
 // let testFile = fs.readFileSync("D:\\Coding\\React\\SportsApp\\server\\test.json", 'utf8')
@@ -32,33 +67,33 @@ getData(url, options);
 
 
 // Call Sports API to get games data
-async function getData(url, options) {
-    try {
-        const response = await fetch(url, options);
-        const data = await response.json();
+// async function getData(url, options) {
+//     try {
+//         const response = await fetch(url, options);
+//         const data = await response.json();
 
-        const teamNames = [];
+//         const teamNames = [];
 
-        data.forEach(event => {
-            teamNames.push({ id: event.id, homeTeam: event.home_team, awayTeam: event.away_team, commence_time: event.commence_time, fanDuelBet: event.bookmakers[2] });
-        });
+//         data.forEach(event => {
+//             teamNames.push({ id: event.id, homeTeam: event.home_team, awayTeam: event.away_team, commence_time: event.commence_time, fanDuelBet: event.bookmakers[2] });
+//         });
 
-        console.log("Today's Games:");
-        teamNames.forEach(team => {
-            console.log("Home Team:", team.homeTeam);
-            console.log("Away Team:", team.awayTeam);
-            console.log("Away Team:", team.fanDuelBet);
-            console.log("-----");
-        });
+//         console.log("Today's Games:");
+//         teamNames.forEach(team => {
+//             console.log("Home Team:", team.homeTeam);
+//             console.log("Away Team:", team.awayTeam);
+//             console.log("Away Team:", team.fanDuelBet);
+//             console.log("-----");
+//         });
 
-        //used for creating json file with todays game
-        createJsonFile("NHL", JSON.stringify(teamNames));
+//         //used for creating json file with todays game
+//         createJsonFile("NHL", JSON.stringify(teamNames));
 
 
-    } catch (error) {
-        console.error(error);
-    }
-}
+//     } catch (error) {
+//         console.error(error);
+//     }
+// }
 
 
 //This creates a JSON file for todays betting data
