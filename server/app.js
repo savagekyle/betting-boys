@@ -90,8 +90,8 @@ getBettingData(bettingMetaDataUrl, bettingMetaDataOptions);
 //         createJsonFile("NHL", JSON.stringify(teamNames));
 
 
-//     } catch (error) {
-//         console.error(error);
+//     } catch (e) {
+//         console.error(e);
 //     }
 // }
 
@@ -137,7 +137,7 @@ function cleanData(dailyBetsData) {
             }
         });
     } catch (e) {
-        console.log("Error on cleanData function:\n" + e)
+        console.error("Error on cleanData function: ", e)
     }
 
 

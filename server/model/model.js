@@ -64,6 +64,36 @@ const teamSchema = new mongoose.Schema({
     }]
 })
 
+const gameResultsSchema = new mongoose.Schema([{
+    winner: {
+        type: String
+    },
+    overResult: {
+        type: Boolean
+    },
+    underResult: {
+        type: Boolean
+    },
+    spreadResults: {
+        team1: {
+            name: {
+                type: String
+            },
+            spreadResult: {
+                type: Boolean
+            }
+        },
+        team2: {
+            name: {
+                type: String
+            },
+            spreadResult: {
+                type: Boolean
+            }
+        }
+    }
+}])
+
 const gameSchema = new mongoose.Schema({
     _id: {
         type: ObjectId,
@@ -142,40 +172,15 @@ const gameSchema = new mongoose.Schema({
             type: String
         },
 
-    }
+    },
+    results: [gameResultsSchema]
 })
 
-const gameResults = new mongoose.Schema({
-    winner: {
-        type: String
-    },
-    overResult: {
-        type: Boolean
-    },
-    underResult: {
-        type: Boolean
-    },
-    spreadResults: {
-        team1: {
-            name: {
-                type: String
-            },
-            spreadResult: {
-                type: Boolean
-            }
-        },
-        team2: {
-            name: {
-                type: String
-            },
-            spreadResult: {
-                type: Boolean
-            }
-        }
-    }
-})
+
 
 
 export const Team = mongoose.models.nhl_teams || mongoose.model("nhl_teams", teamSchema)
 
 export const Game = mongoose.models.nhl_bets || mongoose.model("nhl_bets", gameSchema)
+
+export const GameResults = mongoose.models.nhl_bets || mongoose.model("nhl_bets", gameResultsSchema)

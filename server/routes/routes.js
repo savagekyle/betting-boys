@@ -1,6 +1,6 @@
 import express from "express"
 const router = express.Router()
-import { Game } from "../model/model.js";
+import { Game, GameResults } from "../model/model.js";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
 import storeGames from "../functions/storeGames.js";
@@ -20,7 +20,7 @@ mongoose
         useUnifiedTopology: true,
     })
     .then(() => console.log("MongoDB connected"))
-    .catch((err) => console.log(err));
+    .catch((e) => console.error(e));
 
 app.listen(port, () => {
     console.log("Server listening on port " + port)
@@ -33,7 +33,7 @@ app.get('/api/getAll', async (req, res) => {
         const data = await Game.find();
         res.json(data)
     } catch (e) {
-        console.log("Error getting all games data: " + e.message)
+        console.error("Error getting all games data: ", error)
     }
 })
 
@@ -43,7 +43,27 @@ app.get('/api/getGamesByDate/:date', async (req, res) => {
         const data = await Game.find({ "game.commenceTime": req.params.date });
         res.json(data)
     } catch (e) {
-        console.log("Error getting all games for date: " + e.message)
+        console.error("Error getting all games for date: ", error)
+    }
+})
+
+app.get("/api/getGameByDate&HomeTeam/:date/:homeTeam", async (req, res) => {
+    try {
+
+        const query = {
+            "$and": [
+                {
+                    "game.commenceTime": { "$in": [req.params.date] },
+                    "game.homeTeam": { "$in": [req.params.homeTeam] }
+                }
+            ]
+        }
+
+        const data = await Game.find(query);
+
+        res.json(data)
+    } catch (e) {
+        console.error("Error getting game with specific date: ", e)
     }
 })
 
@@ -53,19 +73,13 @@ app.get('/api/getGamesByDate/:date', async (req, res) => {
 //         const data = await Team.find({ teamName: req.params.teamName });
 //         res.json(data)
 //     } catch (e) {
-//         console.log("Error getting team data: " + e.message)
+//         console.error("Error getting team data: " , e)
 //     }
 // })
 
 
-
-//Used to pull game results data
-//const gameResultsData = await gameResults();
-
-//console.log(gameResultsData)
-
-const games = await storeGames();
-saveGamesData(games);
+// const games = await storeGames();
+// saveGamesData(games);
 
 //Save upcaoming games in DB
 function saveGamesData(games) {
@@ -132,4 +146,111 @@ function saveGamesData(games) {
     })
 }
 
+
+
+//It is used to pull game results data
+// const gameResultsData = await gameResults();
+// saveMatchResults(gameResultsData)
+
+
+async function saveMatchResults(gameResultsData) {
+    console.log("this is getting hit")
+    const today = new Date();
+    const formattedDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+    try {
+
+        // Loop through dummyGames array
+        for (const gameData of gameResultsData) {
+            // Construct query to find game document
+
+            const query = {
+                "$and": [
+                    {
+                        //"game.commenceTime": { "$in": [formattedDate] }, Change back to this 
+                        "game.commenceTime": { "$in": ["2024-03-30"] },
+                        "game.homeTeam": { "$in": [gameData.homeTeam] }
+                    }
+                ]
+            };
+
+            const game1 = await Game.findOne(query);
+            if (!game1) {
+                console.log(`No data found for game: ${gameData.homeTeam} and date: ${formattedDate}`)
+            } else if (game1) {
+                const gameId = game1._id;
+
+                //storing game odds from the db
+                const gameOdds = {
+                    over: game1.game.odds_before.totals.over.point,
+                    spreads: game1.game.odds_before.spreads
+                }
+
+                //getting team winner
+                const homeScore = parseInt(gameData.scores[0].score); // Parse score to integer
+                const awayScore = parseInt(gameData.scores[1].score); // Parse score to integer
+                let winner;
+
+                // Compare scores to determine the winner
+                if (homeScore > awayScore) {
+                    winner = gameData.homeTeam;
+                } else if (homeScore < awayScore) {
+                    winner = gameData.awayTeam;
+                }
+
+                //getting over/under results
+                let overResult = false;
+                let underResult = false;
+
+                if (homeScore + awayScore > gameOdds.over) {
+                    overResult = true;
+                } else if (homeScore + awayScore < gameOdds.over) {
+                    underResult = true
+                }
+
+                //seeing what team covered the spread
+                // Parse the spread points for each team
+                const team1Spread = parseFloat(gameOdds.spreads.team1.point);
+                const team2Spread = parseFloat(gameOdds.spreads.team2.point);
+
+                // Determine if the spread is covered
+                const spreadOutcomeTeam1 = awayScore - homeScore <= team1Spread;
+                const spreadOutcomeTeam2 = homeScore - awayScore <= team2Spread;
+
+                const gameResults = {
+                    winner: winner,
+                    overResult: overResult,
+                    underResult: underResult,
+                    spreadResults: {
+                        team1: {
+                            name: gameData.homeTeam,
+                            spreadResults: spreadOutcomeTeam1
+                        },
+                        team2: {
+                            name: gameData.awayTeam,
+                            spreadResults: spreadOutcomeTeam2
+                        }
+                    }
+                };
+
+                try {
+                    if (gameResults) { // Check if gameResults is defined and not empty
+                        // Update the document using the gameId
+                        const result = await Game.updateOne(
+                            { _id: gameId },
+                            { $push: { 'game.results': gameResults } } // Push gameResults directly
+                        );
+
+                        console.log('Game results updated successfully:', result);
+                    } else {
+                        console.error('Error updating game results: gameResults is empty or undefined');
+                    }
+                } catch (error) {
+                    console.error('Error updating game results:', error);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error updating scores:', error);
+    }
+}
 

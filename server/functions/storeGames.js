@@ -39,7 +39,7 @@ const storeGames = () => {
                     }
                 });
             } catch (e) {
-                console.log("Error while clearing gameData:\n" + e)
+                console.error("Error while clearing gameData: ", error)
             }
             return gameData;
 

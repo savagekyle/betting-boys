@@ -33,12 +33,12 @@ const gameResults = () => {
                     }
                 });
             } catch (e) {
-                console.log("Error while storing game results data:\n" + e)
+                console.error("Error while storing game results data: ", e)
             }
             return gameData;
 
-        } catch (error) {
-            console.error("Error fetching game results" + error);
+        } catch (e) {
+            console.error("Error fetching game results: ", error);
         }
     }
 }
