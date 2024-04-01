@@ -27,7 +27,7 @@ app.listen(port, () => {
 })
 
 
-//Get all teams data
+//Get all games data
 app.get('/api/getAll', async (req, res) => {
     try {
         const data = await Game.find();
@@ -37,7 +37,7 @@ app.get('/api/getAll', async (req, res) => {
     }
 })
 
-//Get teams data with specific game date
+//Get game with date
 app.get('/api/getGamesByDate/:date', async (req, res) => {
     try {
         const data = await Game.find({ "game.commenceTime": req.params.date });
@@ -47,6 +47,7 @@ app.get('/api/getGamesByDate/:date', async (req, res) => {
     }
 })
 
+//Get game with date and homeTeam
 app.get("/api/getGameByDate&HomeTeam/:date/:homeTeam", async (req, res) => {
     try {
 
@@ -78,10 +79,21 @@ app.get("/api/getGameByDate&HomeTeam/:date/:homeTeam", async (req, res) => {
 // })
 
 
-// const games = await storeGames();
-// saveGamesData(games);
+ //const games = await storeGames();
+ //saveGamesData(games);
 
-//Save upcaoming games in DB
+//function to turn price or point into strings
+function pricePointsToString(priceOrPoint){
+    if(priceOrPoint > 0){
+        priceOrPoint = "+" + priceOrPoint.toString();
+    }else if(priceOrPoint < 0){
+        priceOrPoint = priceOrPoint.toString();
+    }
+
+    return priceOrPoint;
+}
+
+//Save upcoming games in DB
 function saveGamesData(games) {
     games.forEach(e => {
 
@@ -100,12 +112,12 @@ function saveGamesData(games) {
                         team1:
                         {
                             name: e.draftkings.markets[0].outcomes[0].name,
-                            price: e.draftkings.markets[0].outcomes[0].price
+                            price: pricePointsToString(e.draftkings.markets[0].outcomes[0].price)
                         },
                         team2:
                         {
                             name: e.draftkings.markets[0].outcomes[1].name,
-                            price: e.draftkings.markets[0].outcomes[1].price
+                            price: pricePointsToString(e.draftkings.markets[0].outcomes[1].price)
                         }
                     },
                     spreads:
@@ -113,27 +125,27 @@ function saveGamesData(games) {
                         team1:
                         {
                             name: e.draftkings.markets[1].outcomes[0].name,
-                            price: e.draftkings.markets[1].outcomes[0].price,
-                            point: e.draftkings.markets[1].outcomes[0].point
+                            price: pricePointsToString(e.draftkings.markets[1].outcomes[0].price),
+                            point: pricePointsToString(e.draftkings.markets[1].outcomes[0].point)
                         },
                         team2:
                         {
                             name: e.draftkings.markets[1].outcomes[1].name,
-                            price: e.draftkings.markets[1].outcomes[1].price,
-                            point: e.draftkings.markets[1].outcomes[1].point
+                            price: pricePointsToString(e.draftkings.markets[1].outcomes[1].price),
+                            point: pricePointsToString(e.draftkings.markets[1].outcomes[1].point)
                         }
                     },
                     totals:
                     {
                         over:
                         {
-                            price: e.draftkings.markets[2].outcomes[0].price,
-                            point: e.draftkings.markets[2].outcomes[0].point
+                            price: pricePointsToString(e.draftkings.markets[2].outcomes[0].price),
+                            point: pricePointsToString(e.draftkings.markets[2].outcomes[0].point)
                         },
                         under:
                         {
-                            price: e.draftkings.markets[2].outcomes[1].price,
-                            point: e.draftkings.markets[2].outcomes[1].point
+                            price: pricePointsToString(e.draftkings.markets[2].outcomes[1].price),
+                            point: pricePointsToString(e.draftkings.markets[2].outcomes[1].point)
                         }
                     },
                 }
@@ -146,15 +158,12 @@ function saveGamesData(games) {
     })
 }
 
-
-
-//It is used to pull game results data
+//Used to pull game results data
 // const gameResultsData = await gameResults();
 // saveMatchResults(gameResultsData)
 
 
 async function saveMatchResults(gameResultsData) {
-    console.log("this is getting hit")
     const today = new Date();
     const formattedDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
     try {
@@ -166,8 +175,8 @@ async function saveMatchResults(gameResultsData) {
             const query = {
                 "$and": [
                     {
-                        //"game.commenceTime": { "$in": [formattedDate] }, Change back to this 
-                        "game.commenceTime": { "$in": ["2024-03-30"] },
+                        "game.commenceTime": { "$in": [formattedDate] }, //todays date 
+                        //"game.commenceTime": { "$in": ["2024-03-30"] }, //Hardcoded date
                         "game.homeTeam": { "$in": [gameData.homeTeam] }
                     }
                 ]
