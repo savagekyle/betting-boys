@@ -171,9 +171,7 @@ const gameSchema = new mongoose.Schema({
         commenceTime: {
             type: String
         },
-
-    },
-    results: [gameResultsSchema]
+    }
 })
 
 

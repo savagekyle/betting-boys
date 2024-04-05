@@ -74,6 +74,20 @@ const storeGames = async () => {
             let gameDate = new Date(games[0].commence_time);
             gameDate = `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDate()}`
 
+            //Used below correcntly store home team as the first Obj in spreads obj
+            let homeTeam = e.homeTeam
+            let homeTeamObj = {}
+            let awayTeamObj = {}
+
+            if (homeTeam === e.draftkings.markets[1].outcomes[0].name) {
+                homeTeamObj = e.draftkings.markets[1].outcomes[0];
+                awayTeamObj = e.draftkings.markets[1].outcomes[1];
+            }
+            else if (homeTeam === e.draftkings.markets[1].outcomes[1].name) {
+                homeTeamObj = e.draftkings.markets[1].outcomes[1];
+                awayTeamObj = e.draftkings.markets[1].outcomes[0];
+            }
+
             try {
                 const game = new Game({
                     _id: new mongoose.Types.ObjectId(),
@@ -99,15 +113,15 @@ const storeGames = async () => {
                             {
                                 team1:
                                 {
-                                    name: e.draftkings.markets[1].outcomes[0].name,
-                                    price: pricePointsToString(e.draftkings.markets[1].outcomes[0].price),
-                                    point: pricePointsToString(e.draftkings.markets[1].outcomes[0].point)
+                                    name: homeTeamObj.name,
+                                    price: pricePointsToString(homeTeamObj.price),
+                                    point: pricePointsToString(homeTeamObj.point)
                                 },
                                 team2:
                                 {
-                                    name: e.draftkings.markets[1].outcomes[1].name,
-                                    price: pricePointsToString(e.draftkings.markets[1].outcomes[1].price),
-                                    point: pricePointsToString(e.draftkings.markets[1].outcomes[1].point)
+                                    name: awayTeamObj.name,
+                                    price: pricePointsToString(awayTeamObj.price),
+                                    point: pricePointsToString(awayTeamObj.point)
                                 }
                             },
                             totals:
@@ -115,12 +129,12 @@ const storeGames = async () => {
                                 over:
                                 {
                                     price: pricePointsToString(e.draftkings.markets[2].outcomes[0].price),
-                                    point: pricePointsToString(e.draftkings.markets[2].outcomes[0].point)
+                                    point: e.draftkings.markets[2].outcomes[0].point
                                 },
                                 under:
                                 {
                                     price: pricePointsToString(e.draftkings.markets[2].outcomes[1].price),
-                                    point: pricePointsToString(e.draftkings.markets[2].outcomes[1].point)
+                                    point: e.draftkings.markets[2].outcomes[1].point
                                 }
                             },
                         }

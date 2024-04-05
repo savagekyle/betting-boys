@@ -51,9 +51,8 @@ const gameResults = async () => {
 
 async function saveMatchResults(gameResultsData) {
     const today = new Date();
-    const formattedDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+    const formattedDate = `${today.getFullYear()}-${(today.getMonth() + 1)}-${today.getDate() - 1}`;
     try {
-        console.log("date", formattedDate)
         // Loop through dummyGames array
         for (const gameData of gameResultsData) {
             // Construct query to find game document
@@ -61,8 +60,7 @@ async function saveMatchResults(gameResultsData) {
             const query = {
                 "$and": [
                     {
-                        //"game.commenceTime": { "$in": [formattedDate] }, //todays date 
-                        "game.commenceTime": { "$in": ["2024-4-1"] }, //Hardcoded date
+                        "game.commenceTime": { "$in": [formattedDate] }, //todays date 
                         "game.homeTeam": { "$in": [gameData.homeTeam] }
                     }
                 ]

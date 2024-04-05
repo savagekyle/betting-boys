@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 import storeGames from "../functions/storeGames.js";
 import gameResults from "../functions/gameResults.js";
 import router from "./apiRoutes.js";
-
+import cronFunc from "../scheduler/scheduler.js"
 dotenv.config();
 
 const port = process.env.PORT || 3088;
@@ -17,9 +17,10 @@ mongoose
         //Connection to the DB
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        socketTimeoutMS: 3000
     })
     .then(() => console.log("MongoDB connected"))
-    .catch((e) => console.error(e));
+    .catch((e) => console.error("Time out error", e));
 
 app.listen(port, () => {
     console.log("Server listening on port " + port)
@@ -31,3 +32,4 @@ app.use('/api', router);
 
 //gameResults();
 
+//cronFunc();
