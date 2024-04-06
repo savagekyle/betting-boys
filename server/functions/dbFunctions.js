@@ -34,6 +34,23 @@ export const getGameByDateAndTeam = async (req, res) => {
     }
 };
 
+export const gameExistsByDateAndTeam = async (date, team) => {
+    try {
+        const query = {
+            "game.commenceTime": date,
+            "game.homeTeam": team
+        };
+        const data = await Game.find(query);
+        if (data.length !== 0) {
+            return true;
+        } else if (data.length === 0) {
+            return false;
+        }
+    } catch (error) {
+        console.error("Error getting game by date and team: ", error);
+    }
+};
+
 //Get data by game
 // app.get('/api/getOne/:id', async (req, res) => {
 //     try {

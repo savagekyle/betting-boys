@@ -1,14 +1,18 @@
 import fetch from 'node-fetch';
 import { Game } from "../model/model.js";
+import * as dotenv from "dotenv";
+dotenv.config();
+
 
 
 const gameResults = async () => {
+    const API_KEY = process.env.API_KEY_ACC2;
 
     const url = 'https://odds.p.rapidapi.com/v4/sports/icehockey_nhl/scores?daysFrom=1';
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '0bc9bfac3cmsh9e4d10c83af2714p154bd0jsn5cb890571721',
+            'X-RapidAPI-Key': API_KEY,
             'X-RapidAPI-Host': 'odds.p.rapidapi.com'
         }
     };
@@ -17,7 +21,6 @@ const gameResults = async () => {
     const gameResultsData = await getGameResults(url, options);
     saveMatchResults(gameResultsData)
 
-    //console.log(gameResultsData)
 
     async function getGameResults(url, options) {
         try {
@@ -69,9 +72,11 @@ async function saveMatchResults(gameResultsData) {
             const game1 = await Game.findOne(query);
             if (!game1) {
                 console.log(`No data found for game: ${gameData.homeTeam} and date: ${formattedDate}`)
-            } else if (game1) {
+            } else if (game1.game.results && Array.isArray(game1.game.results)) {
+                console.log(`The results are already store for game: ${gameData.homeTeam} and date: ${formattedDate}`);
+            }
+            else if (game1) {
                 const gameId = game1._id;
-
                 //storing game odds from the db
                 const gameOdds = {
                     over: game1.game.odds_before.totals.over.point,
@@ -128,7 +133,7 @@ async function saveMatchResults(gameResultsData) {
                 try {
                     if (gameResults) { // Check if gameResults is defined and not empty
                         // Update the document using the gameId
-                        console.log("Game id: ", gameId)
+                        console.log("Pushed results for Game id: ", gameId)
                         const result = await Game.updateOne(
                             { _id: gameId },
                             { $push: { 'game.results': gameResults } } // Push gameResults directly
