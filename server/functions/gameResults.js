@@ -6,7 +6,7 @@ dotenv.config();
 
 
 const gameResults = async () => {
-    const API_KEY = process.env.API__KEY_ACC2;
+    const API_KEY = process.env.API_KEY_ACC2;
 
     const url = 'https://odds.p.rapidapi.com/v4/sports/icehockey_nhl/scores?daysFrom=1';
     const options = {

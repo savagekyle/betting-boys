@@ -2,10 +2,11 @@ import fetch from 'node-fetch';
 import { Game } from "../model/model.js";
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
+import { gameExistsByDateAndTeam } from "../functions/dbFunctions.js"
 dotenv.config();
 
 const storeGames = async () => {
-    const API_KEY = process.env.API__KEY_ACC2;
+    const API_KEY = process.env.API_KEY_ACC2;
 
     const url = 'https://odds.p.rapidapi.com/v4/sports/icehockey_nhl/odds?regions=us&oddsFormat=american&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso';
     const options = {
@@ -20,14 +21,18 @@ const storeGames = async () => {
     const games = await getData(url, options);
 
     //stores data in DB
-    saveData(games);
+    if (games.length === 0) {
+        console.log("No games will be stored");
+    } else if (games.length !== 0) {
+        saveData(games);
+
+    }
 
 
     async function getData(url, options) {
         try {
             const response = await fetch(url, options);
             const data = await response.json();
-
             const games = [];
 
             data.forEach(event => {
@@ -36,6 +41,7 @@ const storeGames = async () => {
 
             const gameData = [];
             const todaysDate = new Date().getDate();
+            let finalGameList = []
 
             try {
                 games.forEach(e => {
@@ -51,7 +57,13 @@ const storeGames = async () => {
             } catch (e) {
                 console.error("Error while clearing gameData:\n" + e)
             }
-            return gameData;
+
+            try {
+                finalGameList = checkIfGameExists(gameData);
+            } catch (e) {
+                console.error("Error checking if the games are stored in the DB: ", e)
+            }
+            return finalGameList;
 
         } catch (error) {
             console.error(error);
@@ -153,6 +165,22 @@ const storeGames = async () => {
             console.log("Games have been stored :)")
 
         });
+    }
+
+    async function checkIfGameExists(gameData) {
+        const gameList = [];
+        for (const e of gameData) {
+            let gameDate = new Date(e.commence_time);
+            gameDate = `${gameDate.getFullYear()}-${gameDate.getMonth() + 1}-${gameDate.getDate()}`;
+
+            let gameExists = await gameExistsByDateAndTeam(gameDate, e.homeTeam);
+            if (!gameExists) {
+                gameList.push(e);
+            } else {
+                console.log(`Game at ${gameDate} with home team: ${e.homeTeam} is already store in DB`);
+            }
+        }
+        return gameList;
     }
 }
 export default storeGames
