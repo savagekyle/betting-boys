@@ -72,9 +72,11 @@ async function saveMatchResults(gameResultsData) {
             const game1 = await Game.findOne(query);
             if (!game1) {
                 console.log(`No data found for game: ${gameData.homeTeam} and date: ${formattedDate}`)
-            } else if (game1) {
+            } else if (game1.game.results && Array.isArray(game1.game.results)) {
+                console.log(`The results are already store for game: ${gameData.homeTeam} and date: ${formattedDate}`);
+            }
+            else if (game1) {
                 const gameId = game1._id;
-
                 //storing game odds from the db
                 const gameOdds = {
                     over: game1.game.odds_before.totals.over.point,
@@ -131,7 +133,7 @@ async function saveMatchResults(gameResultsData) {
                 try {
                     if (gameResults) { // Check if gameResults is defined and not empty
                         // Update the document using the gameId
-                        console.log("Game id: ", gameId)
+                        console.log("Pushed results for Game id: ", gameId)
                         const result = await Game.updateOne(
                             { _id: gameId },
                             { $push: { 'game.results': gameResults } } // Push gameResults directly
