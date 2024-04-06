@@ -1,15 +1,17 @@
 import fetch from 'node-fetch';
 import { Game } from "../model/model.js";
 import mongoose from "mongoose";
-
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const storeGames = async () => {
+    const API_KEY = process.env.API__KEY_ACC2;
 
     const url = 'https://odds.p.rapidapi.com/v4/sports/icehockey_nhl/odds?regions=us&oddsFormat=american&markets=h2h%2Cspreads%2Ctotals&dateFormat=iso';
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '0bc9bfac3cmsh9e4d10c83af2714p154bd0jsn5cb890571721',
+            'X-RapidAPI-Key': API_KEY,
             'X-RapidAPI-Host': 'odds.p.rapidapi.com'
         }
     };

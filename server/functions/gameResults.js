@@ -1,14 +1,18 @@
 import fetch from 'node-fetch';
 import { Game } from "../model/model.js";
+import * as dotenv from "dotenv";
+dotenv.config();
+
 
 
 const gameResults = async () => {
+    const API_KEY = process.env.API__KEY_ACC2;
 
     const url = 'https://odds.p.rapidapi.com/v4/sports/icehockey_nhl/scores?daysFrom=1';
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '0bc9bfac3cmsh9e4d10c83af2714p154bd0jsn5cb890571721',
+            'X-RapidAPI-Key': API_KEY,
             'X-RapidAPI-Host': 'odds.p.rapidapi.com'
         }
     };
@@ -17,7 +21,6 @@ const gameResults = async () => {
     const gameResultsData = await getGameResults(url, options);
     saveMatchResults(gameResultsData)
 
-    //console.log(gameResultsData)
 
     async function getGameResults(url, options) {
         try {
