@@ -8,3 +8,7 @@
     width: min(80rem, 100%);
     margin-inline: auto;
 }
+
+.MuiTypography-root.MuiTypography-body1.teamNames.css-ahj2mt-MuiTypography-root{
+font-weight: bold
+}
