@@ -13,7 +13,7 @@ const cronFunc = () => {
 
     // Schedule function2 to run at 1 PM every day
     cron.schedule('00 12 * * *', async () => {
-        console.log('Running function2 at 1 PM');
+        console.log('Running function2 at 12 PM');
         storeGames(); // Call your function to store data to the database
     });
 

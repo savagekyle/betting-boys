@@ -90,8 +90,21 @@ const storeGames = async () => {
 
             //Used below correcntly store home team as the first Obj in spreads obj
             let homeTeam = e.homeTeam
-            let homeTeamObj = {}
-            let awayTeamObj = {}
+
+            let homeTeamH2H = {};
+            let awayTeamH2H = {};
+
+            if (homeTeam === e.draftkings.markets[0].outcomes[0].name) {
+                homeTeamH2H = e.draftkings.markets[0].outcomes[0];
+                awayTeamH2H = e.draftkings.markets[0].outcomes[1];
+            }
+            else if (homeTeam === e.draftkings.markets[0].outcomes[1].name) {
+                homeTeamH2H = e.draftkings.markets[0].outcomes[1];
+                awayTeamH2H = e.draftkings.markets[0].outcomes[0];
+            }
+
+            let homeTeamObj = {};
+            let awayTeamObj = {};
 
             if (homeTeam === e.draftkings.markets[1].outcomes[0].name) {
                 homeTeamObj = e.draftkings.markets[1].outcomes[0];
@@ -114,13 +127,13 @@ const storeGames = async () => {
                             {
                                 team1:
                                 {
-                                    name: e.draftkings.markets[0].outcomes[0].name,
-                                    price: pricePointsToString(e.draftkings.markets[0].outcomes[0].price)
+                                    name: homeTeamH2H.name,
+                                    price: pricePointsToString(homeTeamH2H.price)
                                 },
                                 team2:
                                 {
-                                    name: e.draftkings.markets[0].outcomes[1].name,
-                                    price: pricePointsToString(e.draftkings.markets[0].outcomes[1].price)
+                                    name: awayTeamH2H.name,
+                                    price: pricePointsToString(awayTeamH2H.price)
                                 }
                             },
                             spreads:

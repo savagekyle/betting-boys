@@ -5,6 +5,7 @@ import storeGames from "../functions/storeGames.js";
 import gameResults from "../functions/gameResults.js";
 import router from "./apiRoutes.js";
 import cronFunc from "../scheduler/scheduler.js"
+import cors from "cors"
 dotenv.config();
 
 const port = process.env.PORT || 3088;
@@ -22,11 +23,14 @@ mongoose
     .then(() => console.log("MongoDB connected"))
     .catch((e) => console.error("Time out error", e));
 
+app.use(cors());
+
+app.use('/api', router);
+
 app.listen(port, () => {
     console.log("Server listening on port " + port)
 })
 
-app.use('/api', router);
 
 //storeGames();
 

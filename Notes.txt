@@ -1,0 +1,12 @@
+Things to note for server:
+1. Make sure the cronFunc function is not commented out
+2. API_keys have to be hardcoded for now as the terminal is not able to read from the .env file
+3. MongoDb server needs to be hardcoded for same issue with .env file
+4. Make sure to not listen on the port with the server, blockout that code
+
+To clear log files for PM2 run these two scripts:
+1. clearOutputLogsPM2
+2. clearErrorLogsPM2
+
+GitHub for Logos
+https://github.com/BradMcGonigle/react-nhl-logos
