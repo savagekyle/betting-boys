@@ -21,7 +21,7 @@ const teamLogos = {
     "Florida Panthers": NHL_Logos.FLA,
     "Los Angeles Kings": NHL_Logos.LAK,
     "Minnesota Wild": NHL_Logos.MIN,
-    "Montreal Canadiens": NHL_Logos.MTL,
+    "Montréal Canadiens": NHL_Logos.MTL,
     "New Jersey Devils": NHL_Logos.NJD,
     "Nashville Predators": NHL_Logos.NSH,
     "New York Islanders": NHL_Logos.NYI,

@@ -101,7 +101,7 @@ async function saveMatchResults(gameResultsData) {
 
                 if (homeScore + awayScore > gameOdds.over) {
                     overResult = true;
-                } else if (homeScore + awayScore < gameOdds.over) {
+                } else if (homeScore + awayScore <= gameOdds.over) {
                     underResult = true
                 }
 
