@@ -51,6 +51,39 @@ export const gameExistsByDateAndTeam = async (date, team) => {
     }
 };
 
+export const getGameResultsByTeam = async (req, res) => {
+    try {
+        const query = {
+            "$or": [
+                {
+                    "game.homeTeam":
+                        { "$in": [req.params.team] }
+                },
+                {
+                    "game.awayTeam": { "$in": [req.params.team] }
+                }
+            ]
+        }
+
+        const projections = {
+            "_id": 0,
+            "game.results": 1
+        }
+
+        const data = await Game.find(query, projections);
+        const result = []
+        //Gets rid of empty objs if there are no results for a game
+        data.filter(obj => {
+            if (JSON.stringify(obj) !== "{}") {
+                result.push(obj)
+            }
+        });
+        res.json(result)
+    } catch (error) {
+        console.error(`Error when getting games for team ${req.params.team}:\n ${error}`)
+    }
+}
+
 //Get data by game
 // app.get('/api/getOne/:id', async (req, res) => {
 //     try {
