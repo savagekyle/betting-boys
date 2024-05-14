@@ -6,6 +6,7 @@ import gameResults from "../functions/gameResults.js";
 import router from "./apiRoutes.js";
 import cronFunc from "../scheduler/scheduler.js"
 import cors from "cors"
+import teamStats from "../functions/Analytics/teamStats.js";
 dotenv.config();
 
 const port = process.env.PORT || 3088;
@@ -37,3 +38,5 @@ app.listen(port, () => {
 //gameResults();
 
 //cronFunc();
+
+//teamStats()
