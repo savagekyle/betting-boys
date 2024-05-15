@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Card from "@mui/material/Card"
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import nhlLogo from "../images/nhl1.png";
 import TeamLogo from './TeamLogo';
+import teamNames from '../teamNames';
+import TeamStats from "../components/TeamStats"
 
 const Home = () => {
 
@@ -24,10 +24,21 @@ const Home = () => {
             }
             const jsonData = await response.json(); // Parse the JSON response
             setGames(jsonData)
-            console.log(jsonData)
         } catch (e) {
             console.error("Error while getting game results in Home: ", e);
         }
+    }
+
+    //Display
+    const [show, setShow] = useState(false);
+    const [teamName, setTeamName] = useState("")
+    const callTeamStats = (teamName) => {
+        if (show === true) {
+            setShow(false);
+        } else {
+            setShow(true);
+        }
+        setTeamName(teamName);
     }
 
     return (
@@ -41,12 +52,6 @@ const Home = () => {
                     <br></br>
                     <Card key={index} sx={{ maxWidth: 400 }}>
                         <CardContent>
-                            {/* <CardMedia
-                                component="img"
-                                height="160"
-                                image={nhlLogo} // Adjust the image path accordingly
-                                alt="NHL logo"
-                            /> */}
                             <TeamLogo team={team.game.awayTeam} /> <TeamLogo team={team.game.homeTeam} />
                             <Typography className="teamNames">{team.game.awayTeam} Vs {team.game.homeTeam}</Typography>
                             <Typography variant="body2" color="text.primary">Results</Typography>
@@ -67,6 +72,14 @@ const Home = () => {
                 </>
             ))
             }
+            <div className="teamsList">
+                <select name="NHLTeams" id="NHLTeams">
+                    {teamNames.map((teamName) => (
+                        <option onClick={(e) => callTeamStats(e.target.text)}>{teamName}</option>
+                    ))}
+                </select>
+            </div>
+            {show && <TeamStats name={teamName} />}
         </div >
     )
 }

@@ -31,7 +31,7 @@ const teamLogos = {
     "Pittsburgh Penguins": NHL_Logos.PIT,
     "Seattle Kraken": NHL_Logos.SEA,
     "San Jose Sharks": NHL_Logos.SJS,
-    "St. Louis Blues": NHL_Logos.STL,
+    "St Louis Blues": NHL_Logos.STL,
     "Tampa Bay Lightning": NHL_Logos.TBL,
     "Toronto Maple Leafs": NHL_Logos.TOR,
     "Vancouver Canucks": NHL_Logos.VAN,
