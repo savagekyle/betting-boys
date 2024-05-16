@@ -1,0 +1,29 @@
+dl > div{
+line-height: 3;
+display: inline-block;
+margin-left: 22px;
+}
+
+dt{
+    font-weight: 900;
+    font-size: 0.85rem;
+    line-height: 5px;
+    color:rgb(131, 148, 153);
+}
+
+dd{
+    text-align: center;
+    font-weight: 900;
+    font-size: 1.4rem;
+}
+
+.logo  {
+    display:inline-block;
+}
+
+.teamName {
+    display: inline-block;
+    position: relative;
+    bottom: 32px;
+    left: 42px;
+}
